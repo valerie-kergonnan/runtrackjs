@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - La Plateforme_</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <!-- Logo -->
+                        <img src="assets/images/La Plateforme.png" alt="La Plateforme_" class="logo">
+
+                        <h2 class="mb-4">Inscription</h2>
+
+                        <!-- Messages -->
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+                        <div id="successMessage" class="alert alert-success d-none" role="alert"></div>
+
+                        <!-- Formulaire d'inscription -->
+                        <form id="registerForm" novalidate>
+                            <div class="mb-3 text-start">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Adresse email
+                                </label>
+                                <input type="email" class="form-control" id="email"
+                                    placeholder="votre.email@laplateforme.io" required pattern=".*@laplateforme\.io$">
+                                <div class="invalid-feedback">
+                                    Veuillez utiliser une adresse @laplateforme.io
+                                </div>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle"></i> Seules les adresses @laplateforme.io sont
+                                    autorisées
+                                </div>
+                            </div>
+
+                            <div class="mb-3 text-start">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock"></i> Mot de passe
+                                </label>
+                                <input type="password" class="form-control" id="password"
+                                    placeholder="Minimum 6 caractères" required minlength="6">
+                                <div class="invalid-feedback">
+                                    Le mot de passe doit contenir au moins 6 caractères.
+                                </div>
+                            </div>
+
+                            <div class="mb-3 text-start">
+                                <label for="confirmPassword" class="form-label">
+                                    <i class="bi bi-lock-fill"></i> Confirmer le mot de passe
+                                </label>
+                                <input type="password" class="form-control" id="confirmPassword"
+                                    placeholder="Répétez votre mot de passe" required minlength="6">
+                                <div class="invalid-feedback">
+                                    Les mots de passe doivent correspondre.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-person-plus"></i> S'inscrire
+                            </button>
+                        </form>
+
+                        <hr>
+
+                        <p class="mb-0">
+                            Déjà un compte ?
+                            <a href="index.html">Se connecter</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Auth JS -->
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Gestion du formulaire d'inscription
+        document.getElementById("registerForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Validation Bootstrap
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                this.classList.add('was-validated');
+                return;
+            }
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            // Vérification de la correspondance des mots de passe
+            if (password !== confirmPassword) {
+                const errorDiv = document.getElementById("errorMessage");
+                errorDiv.textContent = "Les mots de passe ne correspondent pas";
+                errorDiv.classList.remove("d-none");
+                document.getElementById("successMessage").classList.add("d-none");
+                return;
+            }
+
+            // Tentative d'inscription
+            const result = register(email, password, confirmPassword);
+
+            if (result.success) {
+                // Afficher le succès
+                const successDiv = document.getElementById("successMessage");
+                successDiv.textContent = result.message;
+                successDiv.classList.remove("d-none");
+                document.getElementById("errorMessage").classList.add("d-none");
+
+                // Réinitialiser le formulaire
+                this.reset();
+                this.classList.remove('was-validated');
+
+                // Rediriger vers la page de connexion après 2 secondes
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2000);
+            } else {
+                // Afficher l'erreur
+                const errorDiv = document.getElementById("errorMessage");
+                errorDiv.textContent = result.message;
+                errorDiv.classList.remove("d-none");
+                document.getElementById("successMessage").classList.add("d-none");
+            }
+        });
+
+        // Vérifier la correspondance des mots de passe en temps réel
+        document.getElementById("confirmPassword").addEventListener("input", function () {
+            const password = document.getElementById("password").value;
+            const confirmPassword = this.value;
+
+            if (password !== confirmPassword) {
+                this.setCustomValidity("Les mots de passe ne correspondent pas");
+            } else {
+                this.setCustomValidity("");
+            }
+        });
+    </script>
+</body>
+
+</html>
